@@ -4,15 +4,24 @@ const curtoBt = document.querySelector('.app__card-button--curto');
 const longoBt = document.querySelector('.app__card-button--longo');
 const banner = document.querySelector(".app__image");
 const titulo = document.querySelector(".app__title");
-const botoes = document.querySelectorAll('.app__card-button')
-const musicaFocoInput = document.querySelector('#alternar-musica')
-const musica = new Audio('./sons/luna-rise-part-one.mp3')
+const startPauseBt = document.querySelector('#start-pause');
+const botoes = document.querySelectorAll('.app__card-button');
+const musicaFocoInput = document.querySelector('#alternar-musica');
+const iniciarOuPausarBt = document.querySelector('#start-pause span');
+const iniciarOuPausarImg = document.querySelector('.app__card-primary-butto-icon');
+const musica = new Audio('./sons/luna-rise-part-one.mp3');
+const pauseSom = new Audio('./sons/pause.mp3');
+const playSom = new Audio('./sons/play.wav');
+const beepSom = new Audio('./sons/beep.mp3')
+
+let tempoDecorridoEmSegundos = 5
+let intervaloId = null
 
 musica.loop = true;
 musicaFocoInput.addEventListener('change', () => {
     if (musica.paused) {
         musica.play();
-    }else {
+    } else {
         musica.pause();
     }
 })
@@ -55,4 +64,37 @@ function alterarContexto(contexto) {
         default:
             break;
     }
+}
+
+const contagemRegressiva = () => {
+    if (tempoDecorridoEmSegundos <= 0) {
+        // beepSom.play()
+        alert('Tempo Finalizado!')
+        zerar();
+        return;        
+    }
+    tempoDecorridoEmSegundos -= 1
+    console.log('Temporizador: ' + tempoDecorridoEmSegundos);
+}
+
+startPauseBt.addEventListener('click', iniciarOuPausar);
+
+function iniciarOuPausar() {
+    if (intervaloId) {
+        iniciarOuPausarImg.src = "./imagens/play_arrow.png";
+        pauseSom.play();
+        zerar()
+        return
+    
+    }
+    iniciarOuPausarImg.src = "./imagens/pause.png";
+    playSom.play();
+    intervaloId = setInterval(contagemRegressiva, 1000)
+    iniciarOuPausarBt.textContent = "Pausar"
+}
+
+function zerar() {
+    clearInterval(intervaloId)
+    iniciarOuPausarBt.textContent = "Começar"
+    intervaloId = null;
 }
